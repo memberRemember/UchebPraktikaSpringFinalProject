@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование пользователя</title>
+</head>
+<body>
+<div class="container">
+    <form method="post">
+        <div>
+            <input type="text" th:value="${user_object.username}" name="username">
+        </div>
+        <div th:each="role : ${roles}">
+            <input type="checkbox" th:id="${role}"
+            th:name="${'roles[]'}" th:value="${role}"
+                   th:checked="${#lists.contains(user_object.roles, role)}">
+            <label th:text="${role}"></label>
+        </div>
+        <div>
+            <input type="number" step="0.01" name="balance" placeholder="Баланс" th:value="${user_object.balance}">
+        </div>
+        <button class="btn btn-dark" type="submit">Изменение пользователя</button>
+        <a th:href="'/admin/users/' + ${user_object.id}" class="btn btn-warning">Назад</a>
+    </form>
+</div>
+</body>
+</html>

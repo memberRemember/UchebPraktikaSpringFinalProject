@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Теги</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+</head>
+<body>
+    <div th:insert="blocks/header"></div>
+
+    <div class="container main-container"> 
+        <div class="container borderedcont">
+            <h1>Список тегов</h1>
+            <form action="/tags/add" method="post" th:object="${tag}">
+                <div class="mb-3">
+                    <input type="text" name="name" placeholder="Имя тега" th:field="*{name}" class="form-control" required>
+                    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger">Имя не должно быть меньше чем 3 символа</div>
+                </div>
+        
+                <label>Категория: </label>
+                <select name="category" th:field="*{category}" class="form-select mb-3">
+                    <option th:each="category : ${categories}" 
+                            th:value="${category.id}" 
+                            th:text="${category.name}"></option>
+                </select>
+        
+                <button type="submit" class="btn btn-dark" formmethod="post">Добавить тег</button>
+            </form>
+        
+            <h2>Все теги: </h2>
+            <ul class="list-group">
+                <th:block th:each="tag : ${tags}">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span th:text="${tag.name}"></span>
+                        <form action="/tags/update" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${tag.id}">
+                            <input type="text" name="name" th:value="${tag.name}" placeholder="Имя тега" required class="form-control d-inline-block w-50">
+                            <select name="category" class="form-select d-inline-block w-25">
+                                <option th:each="category : ${categories}"
+                                        th:value="${category.id}"
+                                        th:text="${category.name}"
+                                        th:selected="${tag.category != null && category.id == tag.category.id}">
+                                </option>
+                            </select>
+                            <button type="submit" class="btn btn-dark" formmethod="post">Обновить</button>
+                        </form>
+        
+                        <form action="/tags/delete" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${tag.id}">
+                            <button type="submit" class="btn btn-light" formmethod="post">Удалить</button>
+                        </form>
+                    </li>
+                </th:block>
+            </ul>
+        
+        </div>
+    </div>
+
+</body>
+</html>

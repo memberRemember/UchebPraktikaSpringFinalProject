@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Предметы</title>
+</head>
+<body>
+    <div th:insert="blocks/header"></div>
+    
+
+    <div class="container main-container"> 
+        <div class="container borderedcont">
+            <h1>Список предметов</h1>
+
+    
+
+            <form action="/items/add" method="post" th:object="${item}">
+                <input type="text" name="name" placeholder="Наименование" th:field="*{name}" required>
+                <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Имя не должно быть меньше чем 3 символа</div>
+                <input type="text" name="description" placeholder="Описание" th:field="*{description}" required>
+                <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Описание должно быть не больше 255 символов</div>
+                <label for="isStattrak">Stattrak:</label>
+                <input type="checkbox" name="isStattrak" th:value="${item.isStattrak}" placeholder="Stattrak">
+                <label for="type">Тип:</label>
+                <select name="type" th:field="*{type}" required>
+                    <option th:each="type : ${types}" th:value="${type.id}" th:text="${type.name}"></option>
+                </select>
+    
+    
+                <button type="submit" class="btn btn-dark" formmethod="post"><i class="bi bi-plus-square-fill"></i></button>
+            </form>
+    
+
+
+            <h2>Все предметы: </h2>
+            <ul>
+                <th:block th:each="item : ${items}">
+                    <div class="list-group">
+                        <label class="list-group-item d-flex gap-2 justify-content-between">
+                        <span th:text="${item.name} + ' ' + ${item.description}"></span>
+                        <div th:if="${item.type != null}">
+                            <p th:text="'Тип: ' + ${item.type.name}">Дефолт тип</p>
+                        </div>
+                        <div th:if="${item.type == null}">
+                            <p>Нет типов</p>
+                        </div>
+                        <!-- <span th:each="tag : ${item.tags}" th:text="${tag.name} + ', '"></span> -->
+    
+                        <form action="/items/update" method="post" style="display:inline;">
+                            <input class="form-control" type="hidden" name="id" th:value="${item.id}">
+                            <input class="form-control" type="text" name="name" th:value="${item.name}" placeholder="Наименование" required>
+                            <input class="form-control" type="text" name="description" th:value="${item.description}" placeholder="Описание" required>
+                            <!-- <"input type="number" name="price" th:value="${item.price}" placeholder="Цена" step="0.01" required> -->
+                            <input type="checkbox" name="isStattrak" th:value="${item.isStattrak}" placeholder="Stattrak">
+                            
+                            <!-- <span>Тег: </span>
+                            <label for="tags" >Теги: </label>
+                            <select id="tags" multiple th:field="*{subjects}">
+                                <option th:each="tag : ${tags}" th:value="${tag.id}"
+                                th:text="${tag.name}"></option>
+                            </select> -->
+                            
+                            <!-- <input type="text" name="type" th:value="${item.type.name}" placeholder="Тип"> -->
+                            <!-- <label for="type">Тип:</label>
+                            <select id="type" th:field="*{type}" required>
+                                <option th:each="type : ${types}" th:value="${type.id}" th:text="${type.name}"></option>
+                            </select> -->
+    
+                            <!-- <label for="type">Тип:</label>
+                            <select name="type.id" th:field="*{type.id}" required>
+                                <option th:each="type : ${types}" th:value="${type.id}" th:text="${type.name}"></option>
+                            </select> -->
+                            <label for="type" class="form-label">Тип</label>
+                            <select id="type" name="type" class="form-control">
+                                <option th:each="type : ${types}" 
+                                        th:value="${type.id}" 
+                                        th:text="${type.name}" 
+                                        th:selected="${type.id == (item.type != null ? item.type.id : null)}">
+                                </option>
+                            </select>
+                            
+                            
+                            <button type="submit" class="btn btn-dark"  formmethod="post">Обновить</button>
+                        </form>
+                        <form action="/items/delete" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${item.id}">
+                            <button type="submit" class="btn btn-light"  formmethod="post">Удалить</button>
+                        </form>
+                    </div>
+                
+                </th:block>
+            </ul>
+        </div>
+        
+    </div>
+
+</body>
+</html>

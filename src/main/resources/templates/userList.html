@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Все пользователи</title>
+</head>
+<body class="body">
+
+<div th:insert="blocks/header"></div>
+
+
+<div class="container">
+  <a href="/registration" class="btn btn-dark">Новый пользователь</a>
+    <table class="table">
+        <tr>
+            <th>Логин</th>
+            <th>Роли</th>
+            <th>Баланс</th>
+            <th>Действие</th>
+        </tr>
+      <tr th:each="element_user : ${user_list}">
+          <td th:text="${element_user.username}"></td>
+        <td>
+          <div th:each="role : ${element_user.roles}">
+            <p th:text="${role}"></p>
+          </div>
+        </td>
+        <td>
+          <div th:each="balance : ${element_user.balance}">
+              <p th:text="${balance}"></p>
+          </div>
+        </td>
+        <td>
+          <a class="btn btn-light" th:href="'/admin/users/' + ${element_user.id}">Подробнее...</a>
+        </td>
+      </tr>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+spring:
+  config:
+    name: shop2
+  datasource:
+    url: jdbc:postgresql://localhost:5432/springshopfinaldb
+    username: postgres
+    password: 1504
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql:
+server:
+  port: 228

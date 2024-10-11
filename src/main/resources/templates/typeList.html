@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Типы</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+</head>
+<body>
+    <div th:insert="blocks/header"></div>
+
+    <div class="container main-container"> 
+        <div class="container borderedcont">
+            <h1>Список типов</h1>
+            <form action="/types/add" method="post" th:object="${type}">
+                <div class="mb-3">
+                    <input type="text" name="name" placeholder="Имя типа" th:field="*{name}" class="form-control" required>
+                    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger">Имя не должно быть меньше чем 3 символа</div>
+                </div>
+                
+                <button type="submit" class="btn btn-dark" formmethod="post">Добавить тип</button>
+            </form>
+
+            <h2>Все типы:</h2>
+            <ul class="list-group">
+                <th:block th:each="type : ${types}">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span th:text="${type.name}"></span>
+
+                        <form action="/types/update" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${type.id}">
+                            <input type="text" name="name" th:value="${type.name}" placeholder="Имя типа" required class="form-control d-inline-block w-50">
+                            <button type="submit" class="btn btn-dark" formmethod="post">Обновить</button>
+                        </form>
+                        <form action="/types/delete" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${type.id}">
+                            <button type="submit" class="btn btn-light" formmethod="post">Удалить</button>
+                        </form>
+                    </li>
+                </th:block>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>

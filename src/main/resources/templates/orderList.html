@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список заказов</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+</head>
+<body>
+    <div th:insert="blocks/header"></div>
+
+    <div class="container main-container"> 
+        <div class="container borderedcont">
+            <h1>Список заказов</h1>
+
+            <form action="/orders/add" method="post" th:object="${order}" class="mb-4">
+                <div class="mb-3">
+                    <label for="date" class="form-label">Дата:</label>
+                    <input type="date" name="date" placeholder="Дата" th:field="*{date}" class="form-control" required>
+
+                    <label for="totalPrice" class="form-label">Общая цена:</label>
+                    <input type="number" step="0.01" name="totalPrice" placeholder="Общая цена" th:field="*{totalPrice}" class="form-control" readonly>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="user" class="form-label">Пользователи:</label>
+                    <select th:field="*{user}" class="form-select" required>
+                        <option th:each="user : ${users}" 
+                                th:value="${user.id}" 
+                                th:text="${user.username}"></option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="assortments" class="form-label">Товары:</label>
+                    <select multiple th:field="*{assortments}" class="form-select" onchange="calculateTotal()" required>
+                        <option th:each="assortment : ${assortments}" 
+                                th:value="${assortment.id}" 
+                                th:text="${assortment.itemTag.item.name}"
+                                th:attr="data-price=${assortment.price}"></option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-dark" formmethod="post">Добавить заказ</button>
+            </form>
+
+            <h2>Все Заказы:</h2>
+            <ul class="list-group">
+                <th:block th:each="order : ${orders}">
+                    <li class="list-group-item">
+                        <div>
+                            <span th:text="'Дата: ' + ${order.date}"></span><br>
+                            <span th:text="'Сумма заказа: ' + ${order.totalPrice}"></span><br>
+                            <span th:text="'ID клиента: ' + ${order.user.id}"></span><br>
+                            <span th:text="'Клиент: ' + ${order.user.username}"></span><br>
+                        </div>
+
+                        <ul>
+                            <th:block th:each="assortment : ${order.assortments}">
+                                <li>
+                                    <span th:text="'Название товара: ' + ${assortment.itemTag.item.name}"></span><br>
+                                    <span th:text="'Цена товара: ' + ${assortment.price}"></span>
+                                </li>
+                            </th:block>
+                        </ul>
+
+                        <form action="/orders/update" method="post" style="display:inline;" class="mt-2">
+                            <input type="hidden" name="id" th:value="${order.id}">
+                            <input type="date" name="date" th:value="${order.date}" required class="form-control d-inline w-25">
+                            <input type="number" step="0.01" name="totalPrice" placeholder="Общая цена" th:field="*{order.totalPrice}" readonly class="form-control d-inline w-25">
+
+                            <div>
+                                <label for="order.assortments" class="form-label">Товары:</label>
+                                <select multiple name="order.assortments" class="form-select" onchange="calculateTotal()">
+                                    <option th:each="assortment : ${assortments}"
+                                            th:value="${assortment.id}"
+                                            th:text="${assortment.itemTag.item.name}"
+                                            th:attr="data-price=${assortment.price}"
+                                            th:selected="${assortments.contains(assortment)}">
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <button th:if="${userRole == 'MANAGER' || userRole == 'ADMIN'}"  type="submit" class="btn btn-dark" formmethod="post">Обновить заказ</button>
+                        </form>
+
+                        <form th:if="${userRole == 'MANAGER' || userRole == 'ADMIN'}"  action="/orders/delete" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${order.id}">
+                            <button type="submit" class="btn btn-light" formmethod="post">Удалить</button>
+                        </form>
+                    </li>
+                    <hr>
+                </th:block>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+      function calculateTotal() {
+          let total = 0;
+          const selectedOptions = document.querySelector('select[multiple]').selectedOptions;
+          for (let option of selectedOptions) {
+              const price = parseFloat(option.dataset.price);
+              total += price;
+          }
+          document.querySelector('input[name="totalPrice"]').value = total.toFixed(2);
+      }
+    </script>
+</body>
+</html>

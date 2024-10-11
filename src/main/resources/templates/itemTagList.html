@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Товары/Теги</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+</head>
+<body>
+    <div th:insert="blocks/header"></div>
+
+    <div class="container main-container"> 
+        <div class="container borderedcont">
+            <h1>Список товаров/тегов</h1>
+            <form action="/itemtags/add" method="post" th:object="${itemTag}">
+                <div class="mb-3">
+                    <label for="item" class="form-label">Предмет:</label>
+                    <select name="item" th:field="*{item}" class="form-select" required>
+                        <option th:each="item : ${items}" th:value="${item.id}" th:text="${item.name}"></option>
+                    </select>
+
+                    <label for="tag" class="form-label">Тег:</label>
+                    <select name="tag" th:field="*{tag}" class="form-select" required>
+                        <option th:each="tag : ${tags}" th:value="${tag.id}" th:text="${tag.name}"></option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-dark" formmethod="post">Добавить товар</button>
+            </form>
+
+            <h2>Все предметы/теги:</h2>
+            <ul class="list-group">
+                <th:block th:each="itemTag : ${itemTags}">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <div th:if="${itemTag.item != null}">
+                                <p th:text="'Предмет: ' + ${itemTag.item.name}">Дефолт предмет</p>
+                            </div>
+                            <div th:if="${itemTag.item == null}">
+                                <p>Нет предметов</p>
+                            </div>
+                            <div th:if="${itemTag.tag != null}">
+                                <p th:text="'Тег: ' + ${itemTag.tag.name}">Дефолт тег</p>
+                            </div>
+                            <div th:if="${itemTag.tag == null}">
+                                <p>Нет тегов</p>
+                            </div>
+                        </div>
+
+                        <form action="/itemtags/update" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${itemTag.id}">
+                            <div class="d-inline-block me-2">
+                                <label for="item" class="form-label">Предмет</label>
+                                <select id="item" name="item" class="form-select d-inline-block w-50">
+                                    <option th:each="item : ${items}" 
+                                            th:value="${item.id}" 
+                                            th:text="${item.name}" 
+                                            th:selected="${item.id == (itemTag.item != null ? itemTag.item.id : null)}">
+                                    </option>
+                                </select>
+                                <br>
+                                <label for="tag" class="form-label">Тег</label>
+                                <select id="tag" name="tag" class="form-select d-inline-block w-50">
+                                    <option th:each="tag : ${tags}" 
+                                            th:value="${tag.id}" 
+                                            th:text="${tag.name}" 
+                                            th:selected="${tag.id == (itemTag.tag != null ? itemTag.tag.id : null)}">
+                                    </option>
+                                </select>
+                            </div>
+                            <br>
+                            <button type="submit" class="btn btn-dark" formmethod="post">Обновить</button>
+                        </form>
+
+                        <form action="/itemtags/delete" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${itemTag.id}">
+                            <button type="submit" class="btn btn-light" formmethod="post">Удалить</button>
+                        </form>
+                    </li>
+                </th:block>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>

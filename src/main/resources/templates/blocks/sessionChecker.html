@@ -1,0 +1,13 @@
+ let timeout;
+  function resetTimeout() {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+          alert("Сессия закончилась плаки-плаки");
+          window.location.href = '/logout';
+      }, 10000);
+  }
+
+  document.onload = resetTimeout;
+  document.onmousemove = resetTimeout;
+  document.onkeypress = resetTimeout;
+ 
